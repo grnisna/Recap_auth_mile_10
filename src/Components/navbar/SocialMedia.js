@@ -6,12 +6,14 @@ import {
   signInWithPopup,
   signOut,
   GithubAuthProvider,
+  FacebookAuthProvider,
 } from "firebase/auth";
 const auth = getAuth(app);
 
 const SocialMedia = () => {
   const [user, setUser] = useState({});
   const googleProvider = new GoogleAuthProvider();
+  const facebookProvider = new FacebookAuthProvider();
   const githubProvider = new GithubAuthProvider();
 
   const handleGoogleSignIn = () => {
@@ -49,6 +51,18 @@ const SocialMedia = () => {
         console.error(errorMsg);
       });
   };
+  const handleFacebookSignIn = () => {
+    signInWithPopup(auth, facebookProvider)
+      .then((result) => {
+        const user = result.user;
+        setUser(user);
+        console.log(user);
+      })
+      .catch((error) => {
+        const errorMsg = error.message;
+        console.error(errorMsg);
+      });
+  };
 
   return (
     <div>
@@ -61,6 +75,7 @@ const SocialMedia = () => {
           <hr />
           <div className="socialMedia">
             <button onClick={() => handleGoogleSignIn()}>Google</button>
+            <button onClick={() => handleFacebookSignIn()}>Facebook</button>
             <button onClick={() => handleGithubSignIn()}>Github</button>
           </div>
         </div>
