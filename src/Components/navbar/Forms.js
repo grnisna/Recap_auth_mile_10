@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import app from "../../firebase/firebase.init";
-import { createUserWithEmailAndPassword, getAuth, sendEmailVerification } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  sendEmailVerification,
+  updateProfile,
+} from "firebase/auth";
 import SocialMedia from "./SocialMedia";
 import { Link } from "react-router-dom";
 
@@ -9,9 +14,6 @@ const auth = getAuth(app);
 const Forms = () => {
   const [passwordError, setPasswordError] = useState("");
   const [successCreatedUser, setSuccessCreateduser] = useState(false);
-
-
-
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -51,24 +53,24 @@ const Forms = () => {
       });
   };
 
-  const verifyEmail = () =>{
-    sendEmailVerification(auth.currentUser)
-    .then(()=>{
-      alert("send an email for varification. Please check your email address.")
+  const updateUserName = (name) => {
+    updateProfile(auth.currentUser, {
+      displayName: name,
     })
-  }
+      .then(() => {
+        console.log("display name updated");
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
 
-  const updateUserName = (name) =>{
-    updateUserName(auth.currentUser,{
-      displayName:name
-    })
-    .then(()=>{
-      console.log("display name updated")
-    })
-    .catch(error =>{
-      console.error(error);
-    })
-  }
+  const verifyEmail = () => {
+    sendEmailVerification(auth.currentUser).then(() => {
+      alert("send an email for varification. Please check your email address.");
+    });
+  };
+
   return (
     <div className="forms">
       <form onSubmit={handleSubmit}>
@@ -95,7 +97,11 @@ const Forms = () => {
             className="inputField"
           />
           {passwordError ? <p className="errorMsg"> {passwordError} </p> : ""}
-          {successCreatedUser ? <p className="successMsg">Successfully Registration!!</p> :""}
+          {successCreatedUser ? (
+            <p className="successMsg">Successfully Registration!!</p>
+          ) : (
+            ""
+          )}
         </div>
 
         <div className="submitBtn">
@@ -104,7 +110,9 @@ const Forms = () => {
       </form>
 
       <SocialMedia />
-      <p>Already have an account? <Link to="/login" >Log In</Link> </p>
+      <p>
+        Already have an account? <Link to="/login">Log In</Link>{" "}
+      </p>
     </div>
   );
 };
